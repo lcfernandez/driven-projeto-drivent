@@ -19,8 +19,7 @@ async function createPaymentForTicket(newPayment: NewPayment, value: number) {
 async function findPaymentByTicket(ticketId: number) {
   return await prisma.payment.findFirst(
     {
-      where: { ticketId },
-      include: { Ticket: { include: { Enrollment: true } } }
+      where: { ticketId }
     }
   );
 }

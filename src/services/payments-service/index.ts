@@ -29,13 +29,11 @@ async function getPaymentByUser(ticketId: number, userId: number) {
     throw notFoundError();
   }
 
-  const payment = await paymentRepository.findPaymentByTicket(ticketId);
-
-  if (payment.Ticket.Enrollment.userId !== userId) {
+  if (ticket.Enrollment.userId !== userId) {
     throw unauthorizedError();
   }
 
-  return exclude(payment, "Ticket");
+  return await paymentRepository.findPaymentByTicket(ticketId);
 }
 
 const paymentsService = {
