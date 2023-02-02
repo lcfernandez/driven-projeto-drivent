@@ -1,55 +1,70 @@
 import { prisma } from "@/config";
+import { Ticket, TicketStatus } from "@prisma/client";
 
-async function createTicket(ticketTypeId: number, enrollmentId: number) {
-  return await prisma.ticket.create(
-    {
-      data: {
-        ticketTypeId,
-        enrollmentId,
-        status: "RESERVED"
-      },
-      include: { TicketType: true }
+async function findTicketTypes() {
+  return prisma.ticketType.findMany();
+}
+
+async function findTickeyById(ticketId: number) {
+  return prisma.ticket.findFirst({
+    where: {
+      id: ticketId,
+    },
+    include: {
+      Enrollment: true,
     }
-  );
+  });
 }
-
-async function findTicketById(id: number) {
-  return await prisma.ticket.findUnique(
-    {
-      where: { id },
-      include: { Enrollment: true, TicketType: true }
+async function findTickeWithTypeById(ticketId: number) {
+  return prisma.ticket.findFirst({
+    where: {
+      id: ticketId,
+    },
+    include: {
+      TicketType: true,
     }
-  );
+  });
 }
 
-async function findTicketByUser(userId: number) {
-  return await prisma.ticket.findFirst(
-    {
-      where: { Enrollment: { userId } },
-      include: { TicketType: true }
+async function findTicketByEnrollmentId(enrollmentId: number) {
+  return prisma.ticket.findFirst({
+    where: {
+      enrollmentId,
+    },
+    include: {
+      TicketType: true, //inner join
     }
-  );
+  });
 }
 
-async function findAllTicketTypes() {
-  return await prisma.ticketType.findMany();
-}
-
-async function updateTicketStatus(id: number) {
-  return await prisma.ticket.update(
-    {
-      where: { id },
-      data: { status: "PAID" },
+async function createTicket(ticket: CreateTicketParams) {
+  return prisma.ticket.create({
+    data: {
+      ...ticket,
     }
-  );
+  });
 }
+
+async function ticketProcessPayment(ticketId: number) {
+  return prisma.ticket.update({
+    where: {
+      id: ticketId,
+    },
+    data: {
+      status: TicketStatus.PAID,
+    }
+  });
+}
+
+export type CreateTicketParams = Omit<Ticket, "id" | "createdAt" | "updatedAt">
 
 const ticketRepository = {
+  findTicketTypes,
+  findTicketByEnrollmentId,
   createTicket,
-  findTicketById,
-  findTicketByUser,
-  findAllTicketTypes,
-  updateTicketStatus
+  findTickeyById,
+  findTickeWithTypeById,
+  ticketProcessPayment,
 };
 
 export default ticketRepository;

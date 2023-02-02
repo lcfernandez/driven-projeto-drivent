@@ -14,7 +14,7 @@ import {
   eventsRouter,
   enrollmentsRouter,
   ticketsRouter,
-  paymentsRouter
+  paymentsRouter,
 } from "@/routers";
 
 const app = express();
