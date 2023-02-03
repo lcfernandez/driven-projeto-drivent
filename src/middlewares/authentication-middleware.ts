@@ -10,24 +10,28 @@ export async function authenticateTicket(req: AuthenticatedRequest, res: Respons
 
   try {
     const enrollment = await prisma.enrollment.findFirst({
-      where: { userId },
-      include: {
-        Ticket: {
-          where: { status: "PAID", TicketType: { includesHotel: true } }
-        }
-      }
+      where: { userId }
     });
 
     if (!enrollment) return generateUnauthorizedResponse(res);
 
+    const ticket = await prisma.ticket.findFirst({
+      where: { enrollmentId: enrollment.id },
+      include: {
+        TicketType: true
+      }
+    });
+
+    if (!ticket) return generateUnauthorizedResponse(res);
+
+    if (ticket.status !== "PAID" || ticket.TicketType.isRemote || !ticket.TicketType.includesHotel) {
+      return generatePaymentRequiredResponse(res);
+    }
+    
     return next();
   } catch (err) {
     return generateNotFoundResponse(res);
   }
-}
-
-function generateNotFoundResponse(res: Response) {
-  res.status(httpStatus.NOT_FOUND).send(unauthorizedError());
 }
 
 export async function authenticateToken(req: AuthenticatedRequest, res: Response, next: NextFunction) {
@@ -57,6 +61,14 @@ export async function authenticateToken(req: AuthenticatedRequest, res: Response
 
 function generateUnauthorizedResponse(res: Response) {
   res.status(httpStatus.UNAUTHORIZED).send(unauthorizedError());
+}
+
+function generateNotFoundResponse(res: Response) {
+  res.status(httpStatus.NOT_FOUND).send(unauthorizedError());
+}
+
+function generatePaymentRequiredResponse(res: Response) {
+  res.status(httpStatus.PAYMENT_REQUIRED).send(unauthorizedError());
 }
 
 export type AuthenticatedRequest = Request & JWTPayload;
