@@ -5,6 +5,31 @@ import * as jwt from "jsonwebtoken";
 import { unauthorizedError } from "@/errors";
 import { prisma } from "@/config";
 
+export async function authenticateTicket(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+  const { userId } = req;
+
+  try {
+    const enrollment = await prisma.enrollment.findFirst({
+      where: { userId },
+      include: {
+        Ticket: {
+          where: { status: "PAID", TicketType: { includesHotel: true } }
+        }
+      }
+    });
+
+    if (!enrollment) return generateUnauthorizedResponse(res);
+
+    return next();
+  } catch (err) {
+    return generateNotFoundResponse(res);
+  }
+}
+
+function generateNotFoundResponse(res: Response) {
+  res.status(httpStatus.NOT_FOUND).send(unauthorizedError());
+}
+
 export async function authenticateToken(req: AuthenticatedRequest, res: Response, next: NextFunction) {
   const authHeader = req.header("Authorization");
   if (!authHeader) return generateUnauthorizedResponse(res);
