@@ -2,28 +2,28 @@ import { notFoundError } from "@/errors";
 import hotelsRepository from "@/repositories/hotels-repository";
 
 async function getHotelRooms(id: number) {
-    const hotel = await hotelsRepository.findById(id);
+  const hotel = await hotelsRepository.findById(id);
 
-    if (!hotel) {
-        throw notFoundError();
-    }
+  if (!hotel) {
+    throw notFoundError();
+  }
 
-    return await hotelsRepository.findAllRoomsById(id);
+  return await hotelsRepository.findAllRoomsById(id);
 }
 
 async function getHotels() {
-    const hotels = await hotelsRepository.findAll();
+  const hotels = await hotelsRepository.findAll();
 
-    if (!hotels.length) {
-        throw notFoundError();
-    }
-    
-    return hotels;
+  if (!hotels.length) {
+    throw notFoundError();
+  }
+
+  return hotels;
 }
 
 const hotelsService = {
-    getHotelRooms,
-    getHotels
+  getHotelRooms,
+  getHotels
 };
 
 export default hotelsService;
