@@ -8,8 +8,8 @@ async function findById(id: number) {
     return await prisma.hotel.findUnique({ where: { id } });
 }
 
-async function findAllRoomsById(hotelId: number) {
-    return await prisma.room.findMany({ where: { hotelId } });
+async function findAllRoomsById(id: number) {
+    return await prisma.hotel.findUnique({ where: { id }, include: { Rooms: true } });
 }
 
 const hotelsRepository = {
