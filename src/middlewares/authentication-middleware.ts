@@ -13,7 +13,7 @@ export async function authenticateTicket(req: AuthenticatedRequest, res: Respons
       where: { userId }
     });
 
-    if (!enrollment) return generateUnauthorizedResponse(res);
+    if (!enrollment) return generateNotFoundResponse(res);
 
     const ticket = await prisma.ticket.findFirst({
       where: { enrollmentId: enrollment.id },
@@ -22,7 +22,7 @@ export async function authenticateTicket(req: AuthenticatedRequest, res: Respons
       }
     });
 
-    if (!ticket) return generateUnauthorizedResponse(res);
+    if (!ticket) return generateNotFoundResponse(res);
 
     if (ticket.status !== "PAID" || ticket.TicketType.isRemote || !ticket.TicketType.includesHotel) {
       return generatePaymentRequiredResponse(res);
