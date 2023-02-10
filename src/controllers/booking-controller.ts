@@ -1,5 +1,5 @@
 import { AuthenticatedRequest } from "@/middlewares";
-import { bookingsService } from "@/services/bookings-service";
+import { bookingService } from "@/services/booking-service";
 import { Response } from "express";
 import httpStatus from "http-status";
 
@@ -7,7 +7,7 @@ export async function getBooking(req: AuthenticatedRequest, res: Response) {
   const { userId } = req;
 
   try {
-    const booking = await bookingsService.getBooking(userId);
+    const booking = await bookingService.getBooking(userId);
 
     res.status(httpStatus.OK).send(booking);
   } catch (err) {
@@ -20,7 +20,7 @@ export async function postBooking(req: AuthenticatedRequest, res: Response) {
   const { roomId } = req.body;
 
   try {
-    const { id } = await bookingsService.postBooking(userId, roomId);
+    const { id } = await bookingService.postBooking(userId, roomId);
 
     res.status(httpStatus.CREATED).send({ bookingId: id });
   } catch (err) {
@@ -38,7 +38,7 @@ export async function putBooking(req: AuthenticatedRequest, res: Response) {
   const bookingId = Number(req.params.bookingId);
 
   try {
-    const { id } = await bookingsService.putBooking(userId, bookingId, roomId);
+    const { id } = await bookingService.putBooking(userId, bookingId, roomId);
 
     res.status(httpStatus.CREATED).send({ bookingId: id });
   } catch (err) {

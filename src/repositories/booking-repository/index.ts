@@ -31,7 +31,7 @@ async function vacancyStatus(roomId: number) {
   return false;
 }
 
-export const bookingsRepository = {
+export const bookingRepository = {
   findBookingById,
   findBookingByUserId,
   findRoomById,
