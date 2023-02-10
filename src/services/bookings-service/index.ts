@@ -30,8 +30,30 @@ async function postBooking(userId: number, roomId: number) {
   return await bookingsRepository.insertBooking(userId, roomId);
 }
 
-async function putBooking(previousRoomId: number, newRoomId: number) {
+async function putBooking(userId: number, bookingId: number, roomId: number) {
+  const booking = await bookingsRepository.findBookingById(bookingId);
+
+  if (!booking) {
+    throw notFoundError();
+  }
+
+  if (booking.userId !== userId) {
+    throw forbiddenError();
+  }
+
+  const room = await bookingsRepository.findRoomById(roomId);
+
+  if (!room) {
+    throw notFoundError();
+  }
   
+  const vacancy = await bookingsRepository.vacancyStatus(roomId);
+
+  if (!vacancy) {
+    throw forbiddenError();
+  }
+  
+  return await bookingsRepository.updateBooking(bookingId, roomId);
 }
 
 export const bookingsService = {
