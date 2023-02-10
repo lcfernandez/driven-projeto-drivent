@@ -1,4 +1,5 @@
 import { forbiddenError, notFoundError } from "@/errors";
+import { bookingsRepository } from "@/repositories/bookings-repository";
 
 async function gettBooking() {
   
@@ -11,7 +12,7 @@ async function postBooking(userId: number, roomId: number) {
     throw notFoundError();
   }
   
-  const vacancy = await bookingsRepository.vacancyStatus();
+  const vacancy = await bookingsRepository.vacancyStatus(roomId);
 
   if (!vacancy) {
     throw forbiddenError();
