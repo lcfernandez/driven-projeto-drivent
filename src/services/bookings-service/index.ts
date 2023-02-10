@@ -1,8 +1,17 @@
 import { forbiddenError, notFoundError } from "@/errors";
 import { bookingsRepository } from "@/repositories/bookings-repository";
 
-async function gettBooking() {
+async function getBooking(userId: number) {
+  const booking = await bookingsRepository.findBookingByUserId(userId);
   
+  if (!booking) {
+    throw notFoundError();
+  }
+
+  return {
+    id: booking.id,
+    Room: booking.Room
+  };
 }
 
 async function postBooking(userId: number, roomId: number) {
@@ -26,7 +35,7 @@ async function putBooking(previousRoomId: number, newRoomId: number) {
 }
 
 export const bookingsService = {
-  gettBooking,
+  getBooking,
   postBooking,
   putBooking
 };

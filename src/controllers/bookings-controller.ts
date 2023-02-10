@@ -4,7 +4,15 @@ import { Response } from "express";
 import httpStatus from "http-status";
 
 export async function getBooking(req: AuthenticatedRequest, res: Response) {
-  return;
+  const { userId } = req;
+
+  try {
+    const booking = await bookingsService.getBooking(userId);
+
+    res.status(httpStatus.OK).send(booking);
+  } catch (err) {
+    res.sendStatus(httpStatus.NOT_FOUND);
+  }
 }
 
 export async function postBooking(req: AuthenticatedRequest, res: Response) {
