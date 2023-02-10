@@ -5,7 +5,7 @@ async function findBookingById(id: number) {
 }
 
 async function findBookingByUserId(userId: number) {
-  return await prisma.booking.findFirst({ where: { userId }, include: { Room: true} });
+  return await prisma.booking.findFirst({ where: { userId }, include: { Room: true } });
 }
 
 async function findRoomById(id: number) {
@@ -17,7 +17,7 @@ async function insertBooking(userId: number, roomId: number) {
 }
 
 async function updateBooking(bookingId: number, roomId: number) {
-  return await prisma.booking.update({ where: { id: bookingId }, data: { roomId } })
+  return await prisma.booking.update({ where: { id: bookingId }, data: { roomId } });
 }
 
 async function vacancyStatus(roomId: number) {
